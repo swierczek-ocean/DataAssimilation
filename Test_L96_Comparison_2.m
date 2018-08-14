@@ -10,27 +10,29 @@ Ne_Sq = 40;         % ensemble size
 Ne_En = 40;         % ensemble size
 Ne_EDA = 40;        % ensemble size
 spinup_time = 100;  % for getting onto attractor
-exp_time = 4.5;      % dimensionless time units of DA experiment
+exp_time = 13.5;      % dimensionless time units of DA experiment
 long_time = 1000;   % long simulation for creating initial ensemble
 dt = 0.01;          % model time step
 jump = 10;          % number of model time steps between observations
 k = 2;              % observe every kth state variable
 F = 8*ones(n,1);    % free parameter on L96 RHS (F = 8 leads to chaotic solutions)
-r1 = 5;             % En4DVar localization radius
+r1 = 0.5;             % En4DVar localization radius
 r2 = 5;             % 4DVarlocalization radius
-r3 = 5;             % SqEnKF localization radius
+r3 = 6.5;           % SqEnKF localization radius
 r4 = 4.2;           % EDA localization radius
-alpha1 = 0.10;      % En4DVar inflation parameter
+alpha1 = 0.0;       % En4DVar inflation parameter
 alpha2 = 0.10;      % 4DVar inflation parameter
-alpha3 = 0.30;      % SqEnKF inflation parameter
+alpha3 = 0.025;     % SqEnKF inflation parameter
 alpha4 = 0.05;      % EDA inflation parameter
 ObsVar = 1;         % measurement/observation variance
 beta = 0.1;
-color1 = 15;
-color2 = 8;
-color3 = 19;
-color4 = 11;
-color5 = 9;
+color1 = 34;        % SqEnKF
+color2 = 24;        % 4DVar
+color3 = 19;        % EDA
+color4 = 8;         % EnVDvar
+color5 = 1;         % True
+color6 = 4;         % Obs
+color7 = 4;        % spread
 spinup_iter = floor(spinup_time/dt);    % number of spinup model time steps
 exp_iter = floor(exp_time/dt);          % number of experiment model time steps
 q = floor(exp_iter/jump);               % number of observed time steps
@@ -88,7 +90,9 @@ ErrorVec4DVar = zeros(1,exp_iter);
 ErrorVecEDA = zeros(1,exp_iter);
 ErrorVecEn4DVar = zeros(1,exp_iter);
 
-Time_Series_True = [X,zeros(n,exp_iter-1)];    % array for storing full true state  
+Time_Series_True = [X,zeros(n,exp_iter-1)];     % array for storing full true state  
+TimeSeriesObs = zeros(size(H,1),q);             % array for storing all obs
+obscounter = 1;
 total_steps = 0;
 
 %% from start to first observartions
@@ -99,7 +103,8 @@ for ii=2:num_steps
 end
 
 Obs = H*Time_Series_True(:,num_steps);
-
+TimeSeriesObs(:,obscounter) = Obs;
+obscounter = obscounter + 1;
 %% SqEnKF
 for jj=2:num_steps
     for mm=1:Ne_Sq
@@ -125,7 +130,8 @@ for kk=2:q_split
     end
     
     Obs = H*Time_Series_True(:,ObsTimes(kk));
-    
+    TimeSeriesObs(:,obscounter) = Obs;
+    obscounter = obscounter + 1;
     %% SqEnKF
     for jj=1:4
         EnsembleSqEnKF = ODE_RK4_auto(EnsembleSqEnKF,L96fun,dt);
@@ -158,6 +164,8 @@ X_star_t_EDA = X_star_t_En4DVar;
 X_star_t_4DVar = X_star_t_En4DVar;
 
 
+
+
 %% loop for rest of experiment
 
 for kk=q_split+1:q
@@ -168,7 +176,8 @@ for kk=q_split+1:q
     end
     
     Obs = H*Time_Series_True(:,ObsTimes(kk));
-    
+    TimeSeriesObs(:,obscounter) = Obs;
+    obscounter = obscounter + 1;
     %% SqEnKF
     for jj=1:4
         EnsembleSqEnKF = ODE_RK4_auto(EnsembleSqEnKF,L96fun,dt);
@@ -239,12 +248,12 @@ fprintf('Average spread: %g\n',mean(spreadVecSqEnKF(10:end)))
 %% error plot 1
 figure(1)
 set(gcf, 'Position', [25, 25, 1600, 900])
-h1 = plot(ErrorVec4DVar,'Color',Color(:,color1),'LineWidth',2.2);
+h1 = plot(ErrorVec4DVar,'Color',Color(:,color2),'LineWidth',2.2);
 hold on
 h2 = plot(ErrorVecEDA,'Color',Color(:,color3),'LineWidth',2.2);
-h3 = plot(ErrorVecEn4DVar,'Color',Color(:,color2),'LineWidth',2.2);
-h4 = plot(ErrorVecSqEnKF,'Color',Color(:,color4),'LineWidth',2.2);
-h5 = plot(spreadVecSqEnKF,'Color',Color(:,color5),'LineWidth',2.2);
+h3 = plot(ErrorVecEn4DVar,'Color',Color(:,color4),'LineWidth',2.2);
+h4 = plot(ErrorVecSqEnKF,'Color',Color(:,color1),'LineWidth',2.2);
+h5 = plot(spreadVecSqEnKF,'Color',Color(:,color7),'LineWidth',2.2);
 title('RMSE & spread')
 xlabel('time')
 ylabel('RMSE')
@@ -256,12 +265,12 @@ hold off
 %% error plot 2
 figure(2)
 set(gcf, 'Position', [25, 25, 1600, 900])
-h1 = plot(ErrorVec4DVar(ObsTimes(q_split-1):end),'Color',Color(:,color1),'LineWidth',2.2);
+h1 = plot(ErrorVec4DVar(ObsTimes(q_split-1):end),'Color',Color(:,color2),'LineWidth',2.2);
 hold on
 h2 = plot(ErrorVecEDA(ObsTimes(q_split-1):end),'Color',Color(:,color3),'LineWidth',2.2);
-h3 = plot(ErrorVecEn4DVar(ObsTimes(q_split-1):end),'Color',Color(:,color2),'LineWidth',2.2);
-h4 = plot(ErrorVecSqEnKF(ObsTimes(q_split-1):end),'Color',Color(:,color4),'LineWidth',2.2);
-h5 = plot(spreadVecSqEnKF(ObsTimes(q_split-1):end),'Color',Color(:,color5),'LineWidth',2.2);
+h3 = plot(ErrorVecEn4DVar(ObsTimes(q_split-1):end),'Color',Color(:,color4),'LineWidth',2.2);
+h4 = plot(ErrorVecSqEnKF(ObsTimes(q_split-1):end),'Color',Color(:,color1),'LineWidth',2.2);
+h5 = plot(spreadVecSqEnKF(ObsTimes(q_split-1):end),'Color',Color(:,color7),'LineWidth',2.2);
 title('RMSE & spread')
 xlabel('time')
 ylabel('RMSE')
@@ -270,6 +279,22 @@ print('Test_L96_Comparison_2','-djpeg')
 hold off
 %%
 
+%% movie plot 1
+Array_SqEnKF = TimeSeriesSqEnKF(:,ObsTimes(q_split-1):end);
+Array_4DVar = TimeSeries4DVar(:,ObsTimes(q_split-1):end);
+Array_EDA = TimeSeriesEDA(:,ObsTimes(q_split-1):end);
+Array_En4DVar = TimeSeriesEn4DVar(:,ObsTimes(q_split-1):end);
+Array_True = Time_Series_True(:,ObsTimes(q_split-1):end);
+Array_Obs = TimeSeriesObs(:,q_split-1:end);
 
+
+dim1 = 1;
+dim2 = 3;
+dim3 = 5;
+
+coords = [-7.5 12.5 -7.5 12.5 -7.5 12.5];
+L96_movie_1(Array_SqEnKF,Array_4DVar,Array_EDA,Array_En4DVar,Array_True,Array_Obs,...
+    color1,color2,color3,color4,color5,color6,dim1,dim2,dim3,coords,jump)
+%%
 
 toc()
