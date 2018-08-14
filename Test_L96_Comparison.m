@@ -6,6 +6,7 @@ close all
 %% preliminaries
 ACC_Colors
 n = 40;             % dimension of L96 system
+sqn = sqrt(n);
 Ne_Sq = 40;         % ensemble size
 Ne_En = 30;         % ensemble size
 Ne_EDA = 20;        % ensemble size
@@ -202,10 +203,10 @@ ErrorEn4DVar = TimeSeriesEn4DVar - Time_Series_True;
 ErrorEDA = TimeSeriesEDA - Time_Series_True;
 
 for ll=1:exp_iter+1
-    ErrorVecSqEnKF(ll) = norm(ErrorSqEnKF(:,ll),2); 
-    ErrorVec4DVar(ll) = norm(Error4DVar(:,ll),2); 
-    ErrorVecEn4DVar(ll) = norm(ErrorEn4DVar(:,ll),2); 
-    ErrorVecEDA(ll) = norm(ErrorEDA(:,ll),2); 
+    ErrorVecSqEnKF(ll) = norm(ErrorSqEnKF(:,ll),2)/sqn; 
+    ErrorVec4DVar(ll) = norm(Error4DVar(:,ll),2)/sqn; 
+    ErrorVecEn4DVar(ll) = norm(ErrorEn4DVar(:,ll),2)/sqn; 
+    ErrorVecEDA(ll) = norm(ErrorEDA(:,ll),2)/sqn; 
 end
 
 

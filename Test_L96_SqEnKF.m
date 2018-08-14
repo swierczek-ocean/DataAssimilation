@@ -6,6 +6,7 @@ close all
 %% preliminaries
 ACC_Colors
 n = 40;             % dimension of L96 system
+sqn = sqrt(n);
 Ne = 40;            % ensemble size
 spinup_time = 100;  % for getting onto attractor
 exp_time = 50;      % dimensionless time units of DA experiment
@@ -86,11 +87,11 @@ for kk=1:exp_iter
         fprintf('Performing Adams-Bashforth\n')
     end
     mu_a = mean(EnsembleSqEnKF,2);
-    ErrorVecSqEnKF(kk) = norm(mu_a-X,2);
+    ErrorVecSqEnKF(kk) = norm(mu_a-X,2)/sqn;
     if kk==ObsTimes(counter)
         Obs = H*X;
         [EnsembleSqEnKF,mu_a,spread] = DA_SqEnKF(EnsembleSqEnKF,H,Obs,ObsVar,L,alpha);
-        ErrorVecSqEnKF(kk) = norm(mu_a-X,2);
+        ErrorVecSqEnKF(kk) = norm(mu_a-X,2)/sqn;
         spreadVecSqEnKF(ObsTimes(counter):ObsTimes(counter+1)-1) = ...
             spread*ones(1,ObsTimes(counter+1)-ObsTimes(counter));
         counter = counter + 1;

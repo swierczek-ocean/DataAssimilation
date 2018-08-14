@@ -6,6 +6,7 @@ close all
 %% preliminaries
 ACC_Colors
 n = 40;             % dimension of L96 system
+sqn = sqrt(n);
 Ne_Sq = 40;         % ensemble size
 spinup_time = 100;  % for getting onto attractor
 exp_time = 6;      % dimensionless time units of DA experiment
@@ -160,7 +161,7 @@ spreadVec4DVar(:,end) = spread;
 Error4DVar = TimeSeries4DVar - Time_Series_True;
 
 for ll=1:exp_iter
-    ErrorVec4DVar(ll) = norm(Error4DVar(:,ll),2); 
+    ErrorVec4DVar(ll) = norm(Error4DVar(:,ll),2)/sqn; 
 end
 
 error_parameter_1 = mean(ErrorVec4DVar(10*jump:end));

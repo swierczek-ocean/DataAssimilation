@@ -6,6 +6,7 @@ close all
 %% preliminaries
 ACC_Colors
 n = 40;             % dimension of L96 system
+sqn = sqrt(n);
 Ne_Sq = 40;         % EnKF spinup ensemble size
 Ne_EDA = 40;        % EDA ensemble size
 spinup_time = 100;  % for getting onto attractor
@@ -158,7 +159,7 @@ spreadVecEDA(:,end) = spread;
 ErrorEn4DVar = TimeSeriesEDA - Time_Series_True;
 
 for ll=1:exp_iter
-    ErrorVecEDA(ll) = norm(ErrorEn4DVar(:,ll),2); 
+    ErrorVecEDA(ll) = norm(ErrorEn4DVar(:,ll),2)/sqn; 
 end
 
 error_parameter_1 = mean(ErrorVecEDA(10*jump:end));

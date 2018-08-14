@@ -22,6 +22,7 @@ obssz2 = 8;
 truesz = 3.5;
 lag = 2*jump;
 
+figure()
 set(gcf, 'Position', [25, 25, 1600, 900])
 h1 = plot3(Array1(1,1),Array1(2,1),Array1(3,1),'.','Color',Color(:,color1),'MarkerSize',dasz);
 hold on

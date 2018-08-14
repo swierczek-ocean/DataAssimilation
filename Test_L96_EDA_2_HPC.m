@@ -6,6 +6,7 @@ close all
 %% preliminaries
 ACC_Colors
 n = 40;             % dimension of L96 system
+sqn = sqrt(n);
 Ne_Sq = 40;         % SqEnKF ensemble size
 Ne_EDA = 40;        % EDA ensemble size
 spinup_time = 100;  % for getting onto attractor
@@ -164,7 +165,7 @@ for ii=1:r_size
         ErrorEn4DVar = TimeSeriesEDA - Time_Series_True;
         
         for ll=1:exp_iter
-            ErrorVecEDA(ll) = norm(ErrorEn4DVar(:,ll),2);
+            ErrorVecEDA(ll) = norm(ErrorEn4DVar(:,ll),2)/sqn;
         end
         
         if (ii==1)&&(nn==1)
