@@ -8,16 +8,16 @@ ACC_Colors
 n = 40;             % dimension of L96 system
 Ne_Sq = 40;         % ensemble size
 spinup_time = 100;  % for getting onto attractor
-exp_time = 5;       % dimensionless time units of DA experiment
+exp_time = 10;      % dimensionless time units of DA experiment
 long_time = 1000;   % long simulation for creating initial ensemble
 dt = 0.01;          % model time step
 jump = 10;          % number of model time steps between observations
 k = 2;              % observe every kth state variable
 F = 8*ones(n,1);    % free parameter on L96 RHS (F = 8 leads to chaotic solutions)
-r1 = 5;             % SqEnKF localization radius
-r2 = [2:0.5:8];     % 4DVar localization radius
-alpha1 = 0.10;      % SqEnKF inflation parameter
-alpha2 = [0:0.05:0.4];     % 4DVar inflation parameter
+r1 = 6.25;          % SqEnKF localization radius
+r2 = [0.5:0.25:8];  % En4DVar localization radius
+alpha1 = 0.025;     % SqEnKF inflation parameter
+alpha2 = [0:0.02:0.5];     % En4DVar inflation parameter
 ObsVar = 1;         % measurement/observation variance
 r_size = size(r2,2);
 alpha_size = size(alpha2,2);
@@ -27,8 +27,8 @@ color2 = 11;
 spinup_iter = floor(spinup_time/dt);    % number of spinup model time steps
 exp_iter = floor(exp_time/dt);          % number of experiment model time steps
 q = floor(exp_iter/jump);               % number of observed time steps
-q_split = ceil((4/5)*q);                    % run EnKF until 5/6 of the way, then do En4DVar
-ObsTimes = jump:jump:(exp_iter+jump); % vector of times when observation occurs
+q_split = ceil((4/5)*q);                % run EnKF until 4/5 of the way, then do En4DVar
+ObsTimes = jump:jump:(exp_iter+jump);   % vector of times when observation occurs
 sw = floor((5/6)*exp_iter);
 %%
 
@@ -72,6 +72,9 @@ spreadVecEn4DVar = spread.*ones(1,exp_iter);
 ErrorVecEn4DVar = zeros(1,exp_iter);
 Time_Series_True = [X,zeros(n,exp_iter-1)];    % array for storing full true state
 total_steps = 0;
+error_min = 10;
+opt_r = 0;
+opt_alpha = 0;
 
 %% from start to first observartions
 
@@ -92,7 +95,6 @@ for jj=2:num_steps
 end
 [EnsembleSqEnKF,mu_a,spread] = DA_SqEnKF(EnsembleSqEnKF,H,Obs,ObsVar,L_SqEnKF,alpha1);
 TimeSeriesEn4DVar(:,num_steps) = mu_a;
-
 %%
 
 total_steps = total_steps + num_steps;
@@ -138,9 +140,7 @@ error_list_En4DVar = zeros(r_size,alpha_size);
 for ii=1:r_size
     L_En4DVar = ACC_Localize(n,r2(ii));         % En4DVar localization matrix for covariance
     for nn=1:alpha_size
-        
-        
-        
+        tic() 
         for kk=q_split+1:q
             num_steps = ObsTimes(kk)-ObsTimes(kk-1);
             
@@ -167,14 +167,24 @@ for ii=1:r_size
             ErrorVecEn4DVar(ll) = norm(ErrorEn4DVar(:,ll),2);
         end
         
-        error_list_En4DVar(ii,nn) = mean(ErrorVecEn4DVar(10*jump:end));
-        fprintf('Average RMSE for r=%g, alpha=%g: %g, time = %g\n',r(ii),alpha(nn),...
-            mean(ErrorVecEn4DVar(half:end)),time)
-        save error_list_En4DVar
+        if (ii==1)&&(nn==1)
+        error_SqEnKF = mean(ErrorVecEn4DVar(ObsTimes(30):ObsTimes(q_split-1)));
+        fprintf('SqEnKF RMSE for r=%g, alpha=%g is %g\n',r1,alpha1,error_SqEnKF)
+        end
+        
+        err = mean(ErrorVecEn4DVar(ObsTimes(q_split):end));
+        error_list_En4DVar(ii,nn) = err;
+        time = toc();
+        fprintf('Average RMSE for r=%g, alpha=%g: %g, time = %g\n',r2(ii),alpha2(nn),...
+            err,time)
+        if err<error_min
+            error_min = err;
+            opt_r = r2(ii);
+            opt_alpha = alpha2(nn);
+        end
     end
 end
 
-save error_list_En4DVar
+fprintf('Minimum RMSE for r=%g, alpha=%g is %g\n',opt_r,opt_alpha,error_min)
 %%
 
-toc()
