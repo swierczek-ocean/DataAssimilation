@@ -10,6 +10,6 @@
 
 module load matlab
 
-cd ~/Ocean/
+cd ~/DataAssimilation/
 
 matlab -nodisplay -nosplash < Test_L96_SqEnKF_HPC.m > outputSqEnKF.txt
