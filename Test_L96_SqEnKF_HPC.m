@@ -13,8 +13,8 @@ dt = 0.01;          % model time step
 jump = 10;          % number of model time steps between observations
 k = 2;              % observe every kth state variable
 F = 8*ones(n,1);    % free parameter on L96 RHS (F = 8 leads to chaotic solutions)
-r = [3:0.25:8];            % localization radius
-alpha = [0.0:0.025:0.5];   % ensemble inflation parameter
+r = [2:0.2:8];            % localization radius
+alpha = [0.0:0.01:0.16];   % ensemble inflation parameter
 r_size = size(r,2);
 alpha_size = size(alpha,2);
 ObsVar = 1;         % measurement/observation variance
@@ -124,5 +124,5 @@ for ii=1:r_size
         end
     end
 end
-
+save error_list_SqEnKF
 fprintf('Minimum RMSE for r=%g, alpha=%g is %g\n',opt_r,opt_alpha,error_min)
