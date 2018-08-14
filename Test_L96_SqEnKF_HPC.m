@@ -13,8 +13,8 @@ dt = 0.01;          % model time step
 jump = 10;          % number of model time steps between observations
 k = 2;              % observe every kth state variable
 F = 8*ones(n,1);    % free parameter on L96 RHS (F = 8 leads to chaotic solutions)
-r = [1.5:0.5:9.5];            % localization radius
-alpha = [0.1:0.025:0.4];      % ensemble inflation parameter
+r = [3:0.25:8];            % localization radius
+alpha = [0.0:0.025:0.5];   % ensemble inflation parameter
 r_size = size(r,2);
 alpha_size = size(alpha,2);
 ObsVar = 1;         % measurement/observation variance
@@ -45,6 +45,8 @@ x_start = unifrnd(-1,1,n,1);            % random initial condition
 for ii=1:spinup_iter
     [X,FEvals] = ODE_AB4_auto(X,FEvals,L96fun,dt);
 end
+init_cond = X;
+init_FEvals = FEvals;
 %%
 
 %% Make ensemble
@@ -65,11 +67,18 @@ counter = 1;
 index = 1;
 half = floor(exp_iter/2);
 error_list_SqEnKF = zeros(r_size,alpha_size);
+error_min = 2;
+opt_r = 0;
+opt_alpha = 0;
  
 for ii=1:r_size
     L = ACC_Localize(n,r(ii));      % localization matrix for covariance
     for nn=1:alpha_size
         tic();
+        X = init_cond;
+        FEvals = init_FEvals;
+        index = 1;
+        counter = 1;
         for kk=1:exp_iter
             [X,FEvals] = ODE_AB4_auto(X,FEvals,L96fun,dt);
             if (counter>1)&&(kk<ObsTimes(counter-1)+5)
@@ -104,11 +113,16 @@ for ii=1:r_size
             end
         end
         time = toc();
-        error_list_SqEnKF(ii,nn) = mean(ErrorVecSqEnKF(half:end));
+        err = mean(ErrorVecSqEnKF(half:end));
+        error_list_SqEnKF(ii,nn) = err;
         fprintf('Average RMSE for r=%g, alpha=%g: %g, time = %g\n',r(ii),alpha(nn),...
-            mean(ErrorVecSqEnKF(half:end)),time)
-        save error_list_SqEnKF
+            err,time)
+        if err<error_min
+            error_min = err;
+            opt_r = r(ii);
+            opt_alpha = alpha(nn);
+        end
     end
 end
 
-save error_list_SqEnKF
+fprintf('Minimum RMSE for r=%g, alpha=%g is %g\n',opt_r,opt_alpha,error_min)

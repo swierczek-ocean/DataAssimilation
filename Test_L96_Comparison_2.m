@@ -227,7 +227,6 @@ for ll=1:exp_iter
     ErrorVecEDA(ll) = norm(ErrorEDA(:,ll),2); 
 end
 
-
 error_parameter_1 = mean(ErrorVec4DVar(ObsTimes(q_split-1):end));
 fprintf('Average RMSE for 4DVar: %g\n',error_parameter_1)
 error_parameter_2 = mean(ErrorVecSqEnKF(ObsTimes(q_split-1):end));
@@ -270,5 +269,7 @@ legend([h1(1),h2(1),h3(1),h4(1),h5(1)],'4DVar','EDA','En4DVar','SqEnKF','spread'
 print('Test_L96_Comparison_2','-djpeg')
 hold off
 %%
+
+
 
 toc()

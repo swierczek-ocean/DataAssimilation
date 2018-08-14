@@ -8,16 +8,16 @@ ACC_Colors
 n = 40;             % dimension of L96 system
 Ne_Sq = 40;         % ensemble size
 spinup_time = 100;  % for getting onto attractor
-exp_time = 12;       % dimensionless time units of DA experiment
+exp_time = 5;       % dimensionless time units of DA experiment
 long_time = 1000;   % long simulation for creating initial ensemble
 dt = 0.01;          % model time step
 jump = 10;          % number of model time steps between observations
 k = 2;              % observe every kth state variable
 F = 8*ones(n,1);    % free parameter on L96 RHS (F = 8 leads to chaotic solutions)
 r1 = 5;             % SqEnKF localization radius
-r2 = [2:0.5:8];   % 4DVar localization radius
+r2 = [2:0.5:8];     % 4DVar localization radius
 alpha1 = 0.10;      % SqEnKF inflation parameter
-alpha2 = [0.1:0.1:0.4];     % 4DVar inflation parameter
+alpha2 = [0:0.05:0.4];     % 4DVar inflation parameter
 ObsVar = 1;         % measurement/observation variance
 r_size = size(r2,2);
 alpha_size = size(alpha2,2);
@@ -27,7 +27,7 @@ color2 = 11;
 spinup_iter = floor(spinup_time/dt);    % number of spinup model time steps
 exp_iter = floor(exp_time/dt);          % number of experiment model time steps
 q = floor(exp_iter/jump);               % number of observed time steps
-q_split = ceil((5/6)*q);                    % run EnKF until 5/6 of the way, then do En4DVar
+q_split = ceil((4/5)*q);                    % run EnKF until 5/6 of the way, then do En4DVar
 ObsTimes = jump:jump:(exp_iter+jump); % vector of times when observation occurs
 sw = floor((5/6)*exp_iter);
 %%
@@ -168,25 +168,13 @@ for ii=1:r_size
         end
         
         error_list_En4DVar(ii,nn) = mean(ErrorVecEn4DVar(10*jump:end));
-        
+        fprintf('Average RMSE for r=%g, alpha=%g: %g, time = %g\n',r(ii),alpha(nn),...
+            mean(ErrorVecEn4DVar(half:end)),time)
+        save error_list_En4DVar
     end
 end
 
 save error_list_En4DVar
-% fprintf('Average RMSE for En4DVar: %g\n',error_parameter_1)
-% fprintf('Average spread: %g\n',mean(spreadVecEn4DVar(10:end)))
-% 
-% %% error plot
-% set(gcf, 'Position', [25, 25, 1600, 900])
-% h1 = plot(ErrorVecEn4DVar,'Color',Color(:,color1),'LineWidth',2.2);
-% hold on
-% h2 = plot(spreadVecEn4DVar,'Color',Color(:,color2),'LineWidth',2.2);
-% title('RMSE & spread')
-% xlabel('time')
-% ylabel('RMSE')
-% legend([h1(1),h2(1)],'4DVar','spread')
-% print('Test_L96_En4DVar_2','-djpeg')
-% hold off
 %%
 
 toc()
