@@ -11,7 +11,7 @@ ACC_Colors
 n = 40;                 % dimension of L96 system
 sqn = sqrt(n);
 spinup_iter = 10000;    
-exp_iter = 100;        % dimensionless time units of DA experiment
+exp_iter = 10000;       % dimensionless time units of DA experiment
 dt = 0.01;              % model time step
 color1 = 4;
 F = 8;

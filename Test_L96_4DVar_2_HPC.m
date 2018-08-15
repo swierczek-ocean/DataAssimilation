@@ -4,9 +4,9 @@ clear
 close all
 
 %% preliminaries
+ACC_Colors
 warning('off','all')
 warning
-ACC_Colors
 n = 40;             % dimension of L96 system
 sqn = sqrt(n);
 Ne_Sq = 40;         % ensemble size
@@ -18,9 +18,9 @@ jump = 10;          % number of model time steps between observations
 k = 2;              % observe every kth state variable
 F = 8*ones(n,1);    % free parameter on L96 RHS (F = 8 leads to chaotic solutions)
 r1 = 5.5;           % SqEnKF localization radius
-r2 = [0.5:0.25:8];  % En4DVar localization radius
+r2 = [0.5:0.25:8];  % 4DVar localization radius
 alpha1 = 0.06;      % SqEnKF inflation parameter
-alpha2 = [0:0.01:0.25];     % En4DVar inflation parameter
+alpha2 = [0:0.01:0.25];     % 4DVar inflation parameter
 ObsVar = 1;         % measurement/observation variance
 r_size = size(r2,2);
 alpha_size = size(alpha2,2);
@@ -30,7 +30,7 @@ color2 = 11;
 spinup_iter = floor(spinup_time/dt);    % number of spinup model time steps
 exp_iter = floor(exp_time/dt);          % number of experiment model time steps
 q = floor(exp_iter/jump);               % number of observed time steps
-q_split = ceil((4/5)*q);                % run EnKF until 4/5 of the way, then do En4DVar
+q_split = ceil((4/5)*q);                % run EnKF until 4/5 of the way, then do 4DVar
 ObsTimes = jump:jump:(exp_iter+jump);   % vector of times when observation occurs
 sw = floor((5/6)*exp_iter);
 %%
@@ -70,8 +70,9 @@ spread = sqrt(trace(cov(EnsembleSqEnKF'))/n);
 %%
 
 [EnsembleSqEnKF,EnFEvalSqEnKF] = ODE_RK4_auto_start_Ens(L96fun,EnsembleSqEnKF,dt);
-TimeSeriesEn4DVar = zeros(n,exp_iter);         % array for storing full 4DVar
-spreadVecEn4DVar = spread.*ones(1,exp_iter);   
+TimeSeries4DVar = zeros(n,exp_iter);         % array for storing full 4DVar
+spreadVec4DVar = spread.*ones(1,exp_iter);   
+ErrorVec4DVar = zeros(1,exp_iter);
 Time_Series_True = [X,zeros(n,exp_iter-1)];    % array for storing full true state
 total_steps = 0;
 error_min = 10;
@@ -93,13 +94,12 @@ for jj=2:num_steps
         [EnsembleSqEnKF(:,mm),EnFEvalSqEnKF(:,:,mm)] = ...
             ODE_AB4_auto(EnsembleSqEnKF(:,mm),EnFEvalSqEnKF(:,:,mm),L96fun,dt);
     end
-    TimeSeriesEn4DVar(:,jj) = mean(EnsembleSqEnKF,2);
+    TimeSeries4DVar(:,jj) = mean(EnsembleSqEnKF,2);
 end
 [EnsembleSqEnKF,mu_a,spread] = DA_SqEnKF(EnsembleSqEnKF,H,Obs,ObsVar,L_SqEnKF,alpha1);
-TimeSeriesEn4DVar(:,num_steps) = mu_a;
+TimeSeries4DVar(:,num_steps) = mu_a;
 %%
 
-total_steps = total_steps + num_steps;
 %%
 
 %% loop for EnKF spinup
@@ -117,7 +117,7 @@ for kk=2:q_split
     for jj=1:4
         EnsembleSqEnKF = ODE_RK4_auto(EnsembleSqEnKF,L96fun,dt);
         EnFEvalSqEnKF(:,jj,:) = L96fun(EnsembleSqEnKF);
-        TimeSeriesEn4DVar(:,ObsTimes(kk-1)+jj) = mean(EnsembleSqEnKF,2);
+        TimeSeries4DVar(:,ObsTimes(kk-1)+jj) = mean(EnsembleSqEnKF,2);
     end
     
     for jj=5:num_steps
@@ -125,22 +125,21 @@ for kk=2:q_split
             [EnsembleSqEnKF(:,mm),EnFEvalSqEnKF(:,:,mm)] = ...
                 ODE_AB4_auto(EnsembleSqEnKF(:,mm),EnFEvalSqEnKF(:,:,mm),L96fun,dt);
         end
-        TimeSeriesEn4DVar(:,ObsTimes(kk-1)+jj) = mean(EnsembleSqEnKF,2);
+        TimeSeries4DVar(:,ObsTimes(kk-1)+jj) = mean(EnsembleSqEnKF,2);
     end
     [EnsembleSqEnKF,mu_a,spread,P_a] = DA_SqEnKF(EnsembleSqEnKF,H,Obs,ObsVar,L_SqEnKF,alpha1);
-    TimeSeriesEn4DVar(:,ObsTimes(kk)) = mu_a;
-    spreadVecEn4DVar(ObsTimes(kk-1):(ObsTimes(kk)-1)) = spread.*ones(num_steps,1);
+    TimeSeries4DVar(:,ObsTimes(kk)) = mu_a;
+    spreadVec4DVar(ObsTimes(kk-1):(ObsTimes(kk)-1)) = spread.*ones(num_steps,1);
     %%
 end
 
-X_star_t_En4DVar = mu_a;
-CovEn4DVar = (1+alpha1)*L_SqEnKF.*P_a;
-EnsembleEn4DVar = EnsembleSqEnKF;
+X_star_t_4DVar = mu_a;
+Cov4DVar = (1+alpha1)*L_SqEnKF.*P_a;
 
-error_list_En4DVar = zeros(r_size,alpha_size);
+error_list_4DVar = zeros(r_size,alpha_size);
 
 for ii=1:r_size
-    L_En4DVar = ACC_Localize(n,r2(ii));         % En4DVar localization matrix for covariance
+    L_4DVar = ACC_Localize(n,r2(ii));         % 4DVar localization matrix for covariance
     for nn=1:alpha_size
         tic() 
         for kk=q_split+1:q
@@ -152,28 +151,32 @@ for ii=1:r_size
             
             Obs = H*Time_Series_True(:,ObsTimes(kk));
             
-            %% En4DVar
-            [EnsembleEn4DVar,X_star_t_En4DVar,spread,Time_Series,CovEn4DVar] = DA_En4DVar(X_star_t_En4DVar,...
-                EnsembleEn4DVar,L96fun,gradient_fun,H,CovEn4DVar,X_star_t_En4DVar,dt,jump,Obs,ObsVar,n,L_En4DVar,alpha2(nn));
-            TimeSeriesEn4DVar(:,ObsTimes(kk-1):(ObsTimes(kk)-1)) = Time_Series(:,1:(num_steps));
-            spreadVecEn4DVar(ObsTimes(kk-1):(ObsTimes(kk)-1)) = spread.*ones(num_steps,1);
+            %% 4DVar
+            [X_star_t_4DVar,X_star,Time_Series,~,Cov4DVar] = DA_4DVar(X_star_t_4DVar,L96fun,...
+                gradient_fun,Cov4DVar,H,X_star_t_4DVar,dt,num_steps,Obs,ObsVar,n);
+            TimeSeries4DVar(:,ObsTimes(kk-1):(ObsTimes(kk)-1)) = Time_Series(:,1:(num_steps));
+            % Cov4DVar = beta*(1+alpha2)*L_4DVar.*Cov4DVar + (1-beta)*BCov;
+            Cov4DVar = (1+alpha2(nn))*L_4DVar.*Cov4DVar;
+            Cov4DVar = 0.5*(Cov4DVar + Cov4DVar');
+            spread = sqrt(trace(Cov4DVar)/n);
+            spreadVec4DVar(ObsTimes(kk-1):(ObsTimes(kk)-1)) = spread.*ones(num_steps,1);
             %%
         end
         %%
         
-        TimeSeriesEn4DVar(:,end) = X_star_t_En4DVar;
-        spreadVecEn4DVar(:,end) = spread;
-        ErrorEn4DVar = TimeSeriesEn4DVar - Time_Series_True;
+        TimeSeries4DVar(:,end) = X_star_t_4DVar;
+        spreadVec4DVar(:,end) = spread;
+        ErrorEn4DVar = TimeSeries4DVar - Time_Series_True;
         
-        ErrorVecEn4DVar = vecnorm(ErrorEn4DVar,2)./sqn;
+        ErrorVec4DVar = vecnorm(ErrorEn4DVar,2)./sqn;
         
         if (ii==1)&&(nn==1)
-            error_SqEnKF = mean(ErrorVecEn4DVar(ObsTimes(30):ObsTimes(q_split-1)));
+            error_SqEnKF = mean(ErrorVec4DVar(ObsTimes(30):ObsTimes(q_split-1)));
             fprintf('SqEnKF RMSE for r=%g, alpha=%g is %g\n',r1,alpha1,error_SqEnKF)
         end
         
-        err = mean(ErrorVecEn4DVar(ObsTimes(q_split):end));
-        error_list_En4DVar(ii,nn) = err;
+        err = mean(ErrorVec4DVar(ObsTimes(q_split):end));
+        error_list_4DVar(ii,nn) = err;
         time = toc();
         fprintf('Average RMSE for r=%g, alpha=%g: %g, time = %g\n',r2(ii),alpha2(nn),...
             err,time)
@@ -187,6 +190,6 @@ end
 
 fprintf('Minimum RMSE for r=%g, alpha=%g is %g\n',opt_r,opt_alpha,error_min)
 
-save error_list_En4DVar
+save error_list_4DVar
 %%
 

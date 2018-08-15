@@ -9,15 +9,15 @@ n = 40;             % dimension of L96 system
 sqn = sqrt(n);
 Ne_Sq = 40;         % ensemble size
 spinup_time = 100;  % for getting onto attractor
-exp_time = 6;      % dimensionless time units of DA experiment
+exp_time = 6;       % dimensionless time units of DA experiment
 long_time = 1000;   % long simulation for creating initial ensemble
 dt = 0.01;          % model time step
 jump = 10;          % number of model time steps between observations
 k = 2;              % observe every kth state variable
 F = 8*ones(n,1);    % free parameter on L96 RHS (F = 8 leads to chaotic solutions)
-r1 = 5;             % SqEnKF localization radius
+r1 = 5.5;           % SqEnKF localization radius
 r2 = 5;             % 4DVar localization radius
-alpha1 = 0.10;      % SqEnKF inflation parameter
+alpha1 = 0.06;      % SqEnKF inflation parameter
 alpha2 = 0.10;      % 4DVar inflation parameter
 ObsVar = 1;         % measurement/observation variance
 beta = 0.3;
@@ -71,14 +71,12 @@ TimeSeries4DVar = zeros(n,exp_iter);         % array for storing full 4DVar
 
 spreadVec4DVar = spread.*ones(1,exp_iter);   
 
-ErrorVec4DVar = zeros(1,exp_iter);
-
 Time_Series_True = [X,zeros(n,exp_iter-1)];    % array for storing full true state  
 total_steps = 0;
 
 %% from start to first observartions
 
-num_steps = ObsTimes(1)
+num_steps = ObsTimes(1);
 for ii=2:num_steps
     [Time_Series_True(:,ii),FEvals] = ODE_AB4_auto(Time_Series_True(:,ii-1),FEvals,L96fun,dt);
 end
@@ -104,7 +102,7 @@ total_steps = total_steps + num_steps;
 %% loop for EnKF spinup
 
 for kk=2:q_split  
-    num_steps = ObsTimes(kk)-ObsTimes(kk-1)
+    num_steps = ObsTimes(kk)-ObsTimes(kk-1);
     
     for ii=(ObsTimes(kk-1)+1):ObsTimes(kk)
         [Time_Series_True(:,ii),FEvals] = ODE_AB4_auto(Time_Series_True(:,ii-1),FEvals,L96fun,dt);
@@ -136,7 +134,7 @@ X_star_t_4DVar = mu_a;
 Cov4DVar = (1+alpha1)*L_SqEnKF.*P_a;
 
 for kk=q_split+1:q  
-    num_steps = ObsTimes(kk)-ObsTimes(kk-1)
+    num_steps = ObsTimes(kk)-ObsTimes(kk-1);
     
     for ii=(ObsTimes(kk-1)+1):ObsTimes(kk)
         [Time_Series_True(:,ii),FEvals] = ODE_AB4_auto(Time_Series_True(:,ii-1),FEvals,L96fun,dt);
@@ -148,8 +146,8 @@ for kk=q_split+1:q
     [X_star_t_4DVar,~,Time_Series,~,Cov4DVar] = DA_4DVar(X_star_t_4DVar,L96fun,...
         gradient_fun,Cov4DVar,H,X_star_t_4DVar,dt,num_steps,Obs,ObsVar,n);
     TimeSeries4DVar(:,ObsTimes(kk-1):(ObsTimes(kk)-1)) = Time_Series(:,1:(num_steps));
-%     Cov4DVar = beta*(1+alpha2)*L_4DVar.*Cov4DVar + (1-beta)*P_a;
-%     Cov4DVar = 0.5*(Cov4DVar + Cov4DVar');
+    %     Cov4DVar = beta*(1+alpha2)*L_4DVar.*Cov4DVar + (1-beta)*P_a;
+    %     Cov4DVar = 0.5*(Cov4DVar + Cov4DVar');
     spread = sqrt(trace(Cov4DVar)/n);
     spreadVec4DVar(ObsTimes(kk-1):(ObsTimes(kk)-1)) = spread.*ones(num_steps,1);
     %%
@@ -160,9 +158,7 @@ TimeSeries4DVar(:,end) = X_star_t_4DVar;
 spreadVec4DVar(:,end) = spread;
 Error4DVar = TimeSeries4DVar - Time_Series_True;
 
-for ll=1:exp_iter
-    ErrorVec4DVar(ll) = norm(Error4DVar(:,ll),2)/sqn; 
-end
+ErrorVec4DVar = vecnorm(Error4DVar,2)./sqn;
 
 error_parameter_1 = mean(ErrorVec4DVar(10*jump:end));
 fprintf('Average RMSE for 4DVar: %g\n',error_parameter_1)

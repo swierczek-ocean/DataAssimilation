@@ -1,5 +1,5 @@
 #!/bin/bash
-#PBS -N En4Dvar_tune
+#PBS -N 4DVar_tune
 #PBS -W group_list=brio
 #PBS -q windfall
 #PBS -m bea
@@ -12,4 +12,4 @@ module load matlab
 
 cd ~/DataAssimilation/
 
-matlab -nodisplay -nosplash < Test_L96_En4DVar_2_HPC.m > outputEn4DVar.txt
+matlab -nodisplay -nosplash < Test_L96_4DVar_2_HPC.m > output4DVar.txt

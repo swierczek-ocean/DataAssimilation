@@ -5,6 +5,8 @@ close all
 
 %% preliminaries
 ACC_Colors
+warning('off','all')
+warning
 n = 40;             % dimension of L96 system
 sqn = sqrt(n);
 Ne_Sq = 40;         % SqEnKF ensemble size
@@ -16,10 +18,10 @@ dt = 0.01;          % model time step
 jump = 10;          % number of model time steps between observations
 k = 2;              % observe every kth state variable
 F = 8*ones(n,1);    % free parameter on L96 RHS (F = 8 leads to chaotic solutions)
-r1 = 6.25;          % SqEnKF localization radius
-r2 = [0.5:0.25:8];  % EDA localization radius
-alpha1 = 0.025;     % SqEnKF inflation parameter
-alpha2 = [0:0.02:0.5];     % EDA inflation parameter
+r1 = 5.5;           % SqEnKF localization radius
+r2 = [0.5:0.25:7];  % EDA localization radius
+alpha1 = 0.06;      % SqEnKF inflation parameter
+alpha2 = [0:0.02:0.22];     % EDA inflation parameter
 ObsVar = 1;         % measurement/observation variance
 r_size = size(r2,2);
 alpha_size = size(alpha2,2);
@@ -71,7 +73,6 @@ spread = sqrt(trace(cov(EnsembleSqEnKF'))/n);
 [EnsembleSqEnKF,EnFEvalSqEnKF] = ODE_RK4_auto_start_Ens(L96fun,EnsembleSqEnKF,dt);
 TimeSeriesEDA = zeros(n,exp_iter);         % array for storing full 4DVar
 spreadVecEDA = spread.*ones(1,exp_iter);   
-ErrorVecEDA = zeros(1,exp_iter);
 Time_Series_True = [X,zeros(n,exp_iter-1)];    % array for storing full true state
 total_steps = 0;
 error_min = 10;
@@ -162,11 +163,9 @@ for ii=1:r_size
         
         TimeSeriesEDA(:,end) = X_star_t_EDA;
         spreadVecEDA(:,end) = spread;
-        ErrorEn4DVar = TimeSeriesEDA - Time_Series_True;
+        ErrorEDA = TimeSeriesEDA - Time_Series_True;
         
-        for ll=1:exp_iter
-            ErrorVecEDA(ll) = norm(ErrorEn4DVar(:,ll),2)/sqn;
-        end
+        ErrorVecEDA = vecnorm(ErrorEDA,2)./sqn;
         
         if (ii==1)&&(nn==1)
         error_SqEnKF = mean(ErrorVecEDA(ObsTimes(30):ObsTimes(q_split-1)));
@@ -187,5 +186,7 @@ for ii=1:r_size
 end
 
 fprintf('Minimum RMSE for r=%g, alpha=%g is %g\n',opt_r,opt_alpha,error_min)
+
+save error_list_EDA
 %%
 

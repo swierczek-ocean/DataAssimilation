@@ -15,7 +15,7 @@ options = optimoptions('lsqnonlin','Algorithm','levenberg-marquardt',...
 
 [X_star,~,~,~,~,~,J] = lsqnonlin(fun,X,[],[],options);
 
-Time_Series = [X_star,zeros(n,jump-1)];
+Time_Series = [X_star,zeros(n,jump)];
 
 %% preliminaries
 FEvals = [ode_rhs_fun(X_star),zeros(n,3)];
@@ -34,7 +34,7 @@ for ii=2:4
     Time_Series(:,ii) = X;
 end
 
-for ii=5:jump
+for ii=5:jump+1
     %% AB4
     Temp_1 = (55/24).*FEvals(:,4) - ...
         (59/24).*FEvals(:,3) + ...
@@ -51,6 +51,6 @@ end
 X_star_t = X;
 
 [~,M] = ACC_R_function(X_star,ode_rhs_fun,gradient_fun,dt,jump,n);
-% Cov = M\(2*(J'*J))*(M');
+Cov = M\(2*(J'*J))*(M');
 end
 

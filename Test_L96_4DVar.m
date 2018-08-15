@@ -102,11 +102,9 @@ TimeSeries4DVar(:,end) = X_star_t_4DVar;
 
 Error = TimeSeries4DVar - Time_Series_True;
 
-for ll=1:exp_iter+1
-   ErrorVec(ll) = norm(Error(:,ll),2)/sqn; 
-end
+ErrorVec4DVar = vecnorm(Error4DVar,2)./sqn;
 
-error_parameter = mean(ErrorVec(10:end));
+error_parameter = mean(ErrorVec4DVar(10:end));
 fprintf('Average RMSE: %g\n',error_parameter)
 fprintf('Average spread: %g\n',mean(spreadVec(10:end)))
 

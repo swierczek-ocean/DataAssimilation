@@ -43,18 +43,18 @@ set(gca, 'nextplot','replacechildren', 'Visible','on');
 nFrames = 471;
 vidObj = VideoWriter('L96_movie_1.avi');
 vidObj.Quality = 100;
-vidObj.FrameRate = 15;
+vidObj.FrameRate = 7;
 open(vidObj);
 writeVideo(vidObj, getframe(gcf));
 
 for ii=2:lag+1
     jj = floor(ii/jump)+1;
-    h1 = plot3(Array1(1,1:ii),Array1(2,1:ii),Array1(3,1:ii),'.','Color',Color(:,color1),'MarkerSize',dasz);
+    h5 = plot3(Array5(1,1:ii),Array5(2,1:ii),Array5(3,1:ii),'Color',Color(:,color5),'LineWidth',truesz);
     hold on
     h2 = plot3(Array2(1,1:ii),Array2(2,1:ii),Array2(3,1:ii),'.','Color',Color(:,color2),'MarkerSize',dasz);
     h3 = plot3(Array3(1,1:ii),Array3(2,1:ii),Array3(3,1:ii),'.','Color',Color(:,color3),'MarkerSize',dasz);
     h4 = plot3(Array4(1,1:ii),Array4(2,1:ii),Array4(3,1:ii),'.','Color',Color(:,color4),'MarkerSize',dasz);
-    h5 = plot3(Array5(1,1:ii),Array5(2,1:ii),Array5(3,1:ii),'Color',Color(:,color5),'LineWidth',truesz);
+    h1 = plot3(Array1(1,1:ii),Array1(2,1:ii),Array1(3,1:ii),'.','Color',Color(:,color1),'MarkerSize',dasz);
     h6 = plot3(Array6(1,1:jj),Array6(2,1:jj),Array6(3,1:jj),'*','Color',Color(:,color6),'MarkerSize',obssz2);
     plot3(Array6(1,1:jj),Array6(2,1:jj),Array6(3,1:jj),'.','Color',Color(:,color6),'MarkerSize',obssz1);
     xlabel('x')
@@ -71,12 +71,12 @@ for ii=lag+2:exp_time
     jj = floor(ii/jump)+1;
     kk = floor((ii-lag)/jump)+1;
     ll = ii-lag;
-    h1 = plot3(Array1(1,ll:ii),Array1(2,ll:ii),Array1(3,ll:ii),'.','Color',Color(:,color1),'MarkerSize',dasz);
+    h5 = plot3(Array5(1,ll:ii),Array5(2,ll:ii),Array5(3,ll:ii),'Color',Color(:,color5),'LineWidth',truesz);
     hold on
     h2 = plot3(Array2(1,ll:ii),Array2(2,ll:ii),Array2(3,ll:ii),'.','Color',Color(:,color2),'MarkerSize',dasz);
     h3 = plot3(Array3(1,ll:ii),Array3(2,ll:ii),Array3(3,ll:ii),'.','Color',Color(:,color3),'MarkerSize',dasz);
     h4 = plot3(Array4(1,ll:ii),Array4(2,ll:ii),Array4(3,ll:ii),'.','Color',Color(:,color4),'MarkerSize',dasz);
-    h5 = plot3(Array5(1,ll:ii),Array5(2,ll:ii),Array5(3,ll:ii),'Color',Color(:,color5),'LineWidth',truesz);
+    h1 = plot3(Array1(1,ll:ii),Array1(2,ll:ii),Array1(3,ll:ii),'.','Color',Color(:,color1),'MarkerSize',dasz);
     h6 = plot3(Array6(1,kk:jj),Array6(2,kk:jj),Array6(3,kk:jj),'*','Color',Color(:,color6),'MarkerSize',obssz2);
     plot3(Array6(1,kk:jj),Array6(2,kk:jj),Array6(3,kk:jj),'.','Color',Color(:,color6),'MarkerSize',obssz1);
     xlabel('x')

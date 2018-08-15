@@ -1,0 +1,1 @@
+[Array_True(1,250:end)',Array_SqEnKF(1,250:end)',Array_EDA(1,250:end)',Array_En4DVar(1,250:end)',Array_4DVar(1,250:end)']

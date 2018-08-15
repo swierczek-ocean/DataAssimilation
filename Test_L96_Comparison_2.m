@@ -11,20 +11,20 @@ Ne_Sq = 40;         % ensemble size
 Ne_En = 40;         % ensemble size
 Ne_EDA = 40;        % ensemble size
 spinup_time = 100;  % for getting onto attractor
-exp_time = 10;      % dimensionless time units of DA experiment
+exp_time = 12;      % dimensionless time units of DA experiment
 long_time = 1000;   % long simulation for creating initial ensemble
 dt = 0.01;          % model time step
 jump = 10;          % number of model time steps between observations
 k = 2;              % observe every kth state variable
 F = 8*ones(n,1);    % free parameter on L96 RHS (F = 8 leads to chaotic solutions)
-r1 = 0.5;           % En4DVar localization radius
+r1 = 5.5;           % En4DVar localization radius
 r2 = 5;             % 4DVarlocalization radius
-r3 = 6.5;           % SqEnKF localization radius
-r4 = 4.2;           % EDA localization radius
-alpha1 = 0.0;       % En4DVar inflation parameter
+r3 = 5.5;           % SqEnKF localization radius
+r4 = 0.5;           % EDA localization radius
+alpha1 = 0.06;      % En4DVar inflation parameter
 alpha2 = 0.10;      % 4DVar inflation parameter
-alpha3 = 0.025;     % SqEnKF inflation parameter
-alpha4 = 0.05;      % EDA inflation parameter
+alpha3 = 0.06;      % SqEnKF inflation parameter
+alpha4 = 0.00;      % EDA inflation parameter
 ObsVar = 1;         % measurement/observation variance
 beta = 0.1;
 color1 = 34;        % SqEnKF
@@ -37,7 +37,7 @@ color7 = 4;         % spread
 spinup_iter = floor(spinup_time/dt);    % number of spinup model time steps
 exp_iter = floor(exp_time/dt);          % number of experiment model time steps
 q = floor(exp_iter/jump);               % number of observed time steps
-q_split = floor((4/5)*q);
+q_split = floor((3/4)*q);
 ObsTimes = jump:jump:(exp_iter+jump);   % vector of times when observation occurs
 %%
 
@@ -85,11 +85,6 @@ TimeSeriesEDA = zeros(n,exp_iter);           % array for storing full EDA
 TimeSeriesEn4DVar = zeros(n,exp_iter);       % array for storing full En4DVar
 
 spreadVecSqEnKF = spread.*ones(1,exp_iter);   
-
-ErrorVecSqEnKF = zeros(1,exp_iter);
-ErrorVec4DVar = zeros(1,exp_iter);
-ErrorVecEDA = zeros(1,exp_iter);
-ErrorVecEn4DVar = zeros(1,exp_iter);
 
 Time_Series_True = [X,zeros(n,exp_iter-1)];     % array for storing full true state  
 TimeSeriesObs = zeros(size(H,1),q);             % array for storing all obs
@@ -164,9 +159,6 @@ X_star_t_En4DVar = mean(EnsembleSqEnKF,2);
 X_star_t_EDA = X_star_t_En4DVar;
 X_star_t_4DVar = X_star_t_En4DVar;
 
-
-
-
 %% loop for rest of experiment
 
 for kk=q_split+1:q
@@ -231,16 +223,15 @@ Error4DVar = TimeSeries4DVar - Time_Series_True;
 ErrorEn4DVar = TimeSeriesEn4DVar - Time_Series_True;
 ErrorEDA = TimeSeriesEDA - Time_Series_True;
 
-for ll=1:exp_iter
-    ErrorVecSqEnKF(ll) = norm(ErrorSqEnKF(:,ll),2)/sqn; 
-    ErrorVec4DVar(ll) = norm(Error4DVar(:,ll),2)/sqn; 
-    ErrorVecEn4DVar(ll) = norm(ErrorEn4DVar(:,ll),2)/sqn; 
-    ErrorVecEDA(ll) = norm(ErrorEDA(:,ll),2)/sqn; 
-end
+ErrorVecSqEnKF = vecnorm(ErrorSqEnKF,2)./sqn;
+ErrorVec4DVar = vecnorm(Error4DVar,2)./sqn;
+ErrorVecEn4DVar = vecnorm(ErrorEn4DVar,2)./sqn;
+ErrorVecEDA = vecnorm(ErrorEDA,2)./sqn;
+
 
 error_parameter_1 = mean(ErrorVec4DVar(ObsTimes(q_split-1):end));
 fprintf('Average RMSE for 4DVar: %g\n',error_parameter_1)
-error_parameter_2 = mean(ErrorVecSqEnKF(ObsTimes(q_split-1):end));
+error_parameter_2 = mean(ErrorVecSqEnKF(floor(exp_iter/2):end));
 fprintf('Average RMSE for SqEnKF: %g\n',error_parameter_2)
 error_parameter_3 = mean(ErrorVecEDA(ObsTimes(q_split-1):end));
 fprintf('Average RMSE for EDA: %g\n',error_parameter_3)
@@ -281,24 +272,24 @@ print('Test_L96_Comparison_2','-djpeg')
 hold off
 %%
 
-%% movie plot 1
-Array_SqEnKF = TimeSeriesSqEnKF(:,ObsTimes(q_split-1):end);
-Array_4DVar = TimeSeries4DVar(:,ObsTimes(q_split-1):end);
-Array_EDA = TimeSeriesEDA(:,ObsTimes(q_split-1):end);
-Array_En4DVar = TimeSeriesEn4DVar(:,ObsTimes(q_split-1):end);
-Array_True = Time_Series_True(:,ObsTimes(q_split-1):end);
-Array_Obs = TimeSeriesObs(:,q_split-1:end);
-
-
-dim1 = 1;
-dim2 = 3;
-dim3 = 5;
-xx = -5;
-yy = 7.5;
-
-coords = [xx yy xx yy xx yy];
-L96_movie_1(Array_SqEnKF,Array_4DVar,Array_EDA,Array_En4DVar,Array_True,Array_Obs,...
-    color1,color2,color3,color4,color5,color6,dim1,dim2,dim3,coords,jump)
-%%
+% %% movie plot 1
+% Array_SqEnKF = TimeSeriesSqEnKF(:,ObsTimes(q_split-1):end);
+% Array_4DVar = TimeSeries4DVar(:,ObsTimes(q_split-1):end);
+% Array_EDA = TimeSeriesEDA(:,ObsTimes(q_split-1):end);
+% Array_En4DVar = TimeSeriesEn4DVar(:,ObsTimes(q_split-1):end);
+% Array_True = Time_Series_True(:,ObsTimes(q_split-1):end);
+% Array_Obs = TimeSeriesObs(:,q_split-1:end);
+% 
+% 
+% dim1 = 1;
+% dim2 = 3;
+% dim3 = 5;
+% xx = -6;
+% yy = 9;
+% 
+% coords = [xx yy xx yy xx yy];
+% L96_movie_1(Array_SqEnKF,Array_4DVar,Array_EDA,Array_En4DVar,Array_True,Array_Obs,...
+%     color1,color2,color3,color4,color5,color6,dim1,dim2,dim3,coords,jump)
+% %%
 
 toc()
