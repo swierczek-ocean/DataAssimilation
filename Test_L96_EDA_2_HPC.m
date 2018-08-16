@@ -19,9 +19,9 @@ jump = 10;          % number of model time steps between observations
 k = 2;              % observe every kth state variable
 F = 8*ones(n,1);    % free parameter on L96 RHS (F = 8 leads to chaotic solutions)
 r1 = 5.4;           % SqEnKF localization radius
-r2 = [1:0.2:8];     % EDA localization radius
+r2 = [1:0.5:8];     % EDA localization radius
 alpha1 = 0.08;      % SqEnKF inflation parameter
-alpha2 = [0.0:0.01:0.35];     % EDA inflation parameter
+alpha2 = [0.15:0.02:0.51];     % EDA inflation parameter
 ObsVar = 1;         % measurement/observation variance
 sigma = sqrt(ObsVar);
 r_size = size(r2,2);

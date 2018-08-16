@@ -18,14 +18,14 @@ jump = 10;          % number of model time steps between observations
 k = 2;              % observe every kth state variable
 F = 8*ones(n,1);    % free parameter on L96 RHS (F = 8 leads to chaotic solutions)
 r1 = 5.4;           % SqEnKF localization radius
-r2 = [1:0.2:8];     % 4DVar localization radius
+r2 = [2:0.5:8];     % 4DVar localization radius
 alpha1 = 0.08;      % SqEnKF inflation parameter
-alpha2 = [0.0:0.01:0.35];     % 4DVar inflation parameter
+alpha2 = [0.0:0.02:0.36];     % 4DVar inflation parameter
 ObsVar = 1;         % measurement/observation variance
 sigma = sqrt(ObsVar);
 r_size = size(r2,2);
 alpha_size = size(alpha2,2);
-beta = 0.3;
+beta = 0.5;
 color1 = 21;
 color2 = 11;
 spinup_iter = floor(spinup_time/dt);    % number of spinup model time steps
@@ -157,9 +157,9 @@ for ii=1:r_size
             [X_star_t_4DVar,X_star,Time_Series,~,Cov4DVar] = DA_4DVar(X_star_t_4DVar,L96fun,...
                 gradient_fun,Cov4DVar,H,X_star_t_4DVar,dt,num_steps,Obs,ObsVar,n);
             TimeSeries4DVar(:,ObsTimes(kk-1):(ObsTimes(kk)-1)) = Time_Series(:,1:(num_steps));
-            % Cov4DVar = beta*(1+alpha2)*L_4DVar.*Cov4DVar + (1-beta)*BCov;
-            Cov4DVar = (1+alpha2(nn))*L_4DVar.*Cov4DVar;
-            Cov4DVar = 0.5*(Cov4DVar + Cov4DVar');
+            Cov4DVar = beta*(1+alpha2(nn))*L_4DVar.*Cov4DVar + (1-beta)*P_a;
+%             Cov4DVar = (1+alpha2(nn))*L_4DVar.*Cov4DVar;
+%             Cov4DVar = 0.5*(Cov4DVar + Cov4DVar');
             spread = sqrt(trace(Cov4DVar)/n);
             spreadVec4DVar(ObsTimes(kk-1):(ObsTimes(kk)-1)) = spread.*ones(num_steps,1);
             %%
