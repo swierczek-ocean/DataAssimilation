@@ -1,5 +1,5 @@
 #!/bin/bash
-#PBS -N En4Dvar_tune
+#PBS -N En4Dvar
 #PBS -W group_list=brio
 #PBS -q windfall
 #PBS -m bea

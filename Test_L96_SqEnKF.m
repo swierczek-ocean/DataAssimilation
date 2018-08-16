@@ -15,8 +15,8 @@ dt = 0.01;          % model time step
 jump = 10;          % number of model time steps between observations
 k = 2;              % observe every kth state variable
 F = 8*ones(n,1);    % free parameter on L96 RHS (F = 8 leads to chaotic solutions)
-r = 6;              % localization radius
-alpha = 0.025;      % ensemble inflation parameter
+r = 5.4;            % localization radius
+alpha = 0.08;       % ensemble inflation parameter
 ObsVar = 1;         % measurement/observation variance
 sigma = sqrt(ObsVar);
 color1 = 11;

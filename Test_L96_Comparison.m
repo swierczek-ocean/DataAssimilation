@@ -19,11 +19,11 @@ k = 2;              % observe every kth state variable
 F = 8*ones(n,1);    % free parameter on L96 RHS (F = 8 leads to chaotic solutions)
 r1 = 5;             % En4DVar localization radius
 r2 = 5;             % 4DVarlocalization radius
-r3 = 5;             % SqEnKF localization radius
+r3 = 5.4;           % SqEnKF localization radius
 r4 = 4.2;           % EDA localization radius
 alpha1 = 0.10;      % En4DVar inflation parameter
 alpha2 = 0.10;      % 4DVar inflation parameter
-alpha3 = 0.10;      % SqEnKF inflation parameter
+alpha3 = 0.08;      % SqEnKF inflation parameter
 alpha4 = 0.05;      % EDA inflation parameter
 ObsVar = 1;         % measurement/observation variance
 sigma = sqrt(ObsVar);

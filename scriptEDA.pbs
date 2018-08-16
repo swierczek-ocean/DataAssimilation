@@ -1,5 +1,5 @@
 #!/bin/bash
-#PBS -N EDA_tune
+#PBS -N EDA
 #PBS -W group_list=brio
 #PBS -q windfall
 #PBS -m bea
