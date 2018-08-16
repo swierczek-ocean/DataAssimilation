@@ -20,6 +20,7 @@ r2 = 5;             % 4DVar localization radius
 alpha1 = 0.06;      % SqEnKF inflation parameter
 alpha2 = 0.10;      % 4DVar inflation parameter
 ObsVar = 1;         % measurement/observation variance
+sigma = sqrt(ObsVar);
 beta = 0.3;
 color1 = 21;
 color2 = 11;
@@ -33,6 +34,7 @@ ObsTimes = jump:jump:(exp_iter+jump); % vector of times when observation occurs
 %% setup & utilities
 [L1,L2] = L96_get_matrices(n);          % makes matrices for matrix-vector execution of L96
 [H,m] = L96_get_H(n,k);                 % creates observation operator
+mdim = size(H,1);                       % number of observed state variables
 L96fun = @(x)((L1*x).*(L2*x) - x + F);  % Lorenz '96 dynamical system
 gradient_fun = @(x)L96_gradient(x,L1,L2,n);     % Lorenz '96 gradient
 x_start = unifrnd(-1,1,n,1);            % random initial condition
@@ -81,7 +83,7 @@ for ii=2:num_steps
     [Time_Series_True(:,ii),FEvals] = ODE_AB4_auto(Time_Series_True(:,ii-1),FEvals,L96fun,dt);
 end
 
-Obs = H*Time_Series_True(:,num_steps);
+Obs = H*Time_Series_True(:,num_steps) + normrnd(0,sigma,mdim,1);
 
 %% SqEnKF
 for jj=2:num_steps
@@ -108,7 +110,7 @@ for kk=2:q_split
         [Time_Series_True(:,ii),FEvals] = ODE_AB4_auto(Time_Series_True(:,ii-1),FEvals,L96fun,dt);
     end
     
-    Obs = H*Time_Series_True(:,ObsTimes(kk));
+    Obs = H*Time_Series_True(:,ObsTimes(kk)) + normrnd(0,sigma,mdim,1);
     
     %% SqEnKF
     for jj=1:4
@@ -140,7 +142,7 @@ for kk=q_split+1:q
         [Time_Series_True(:,ii),FEvals] = ODE_AB4_auto(Time_Series_True(:,ii-1),FEvals,L96fun,dt);
     end
     
-    Obs = H*Time_Series_True(:,ObsTimes(kk));
+    Obs = H*Time_Series_True(:,ObsTimes(kk)) + normrnd(0,sigma,mdim,1);
     
     %% 4DVar
     [X_star_t_4DVar,~,Time_Series,~,Cov4DVar] = DA_4DVar(X_star_t_4DVar,L96fun,...

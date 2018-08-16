@@ -14,11 +14,12 @@ dt = 0.01;          % model time step
 jump = 10;          % number of model time steps between observations
 k = 2;              % observe every kth state variable
 F = 8*ones(n,1);    % free parameter on L96 RHS (F = 8 leads to chaotic solutions)
-r = [2:0.2:8];            % localization radius
-alpha = [0.0:0.01:0.16];   % ensemble inflation parameter
+r = [1:0.2:8];             % localization radius
+alpha = [0.0:0.01:0.35];   % ensemble inflation parameter
 r_size = size(r,2);
 alpha_size = size(alpha,2);
 ObsVar = 1;         % measurement/observation variance
+sigma = sqrt(ObsVar);
 color1 = 11;
 color2 = 21;
 spinup_iter = floor(spinup_time/dt);    % number of spinup model time steps
@@ -30,6 +31,7 @@ ObsTimes = jump+1:jump:(exp_iter+jump); % vector of times when observation occur
 %% setup & utilities
 [L1,L2] = L96_get_matrices(n);          % makes matrices for matrix-vector execution of L96
 [H,m] = L96_get_H(n,k);                 % creates observation operator
+mdim = size(H,1);                       % number of observed state variables
 L96fun = @(x)((L1*x).*(L2*x) - x + F);  % Lorenz '96 dynamical system
 x_start = unifrnd(-1,1,n,1);            % random initial condition
 %%
@@ -104,7 +106,7 @@ for ii=1:r_size
             mu_a = mean(EnsembleSqEnKF,2);
             ErrorVecSqEnKF(kk) = norm(mu_a-X,2)/sqn;
             if kk==ObsTimes(counter)
-                Obs = H*X;
+                Obs = H*X + normrnd(0,sigma,mdim,1);
                 [EnsembleSqEnKF,mu_a,spread] = DA_SqEnKF(EnsembleSqEnKF,H,Obs,ObsVar,L,alpha(nn));
                 ErrorVecSqEnKF(kk) = norm(mu_a-X,2)/sqn;
                 spreadVecSqEnKF(ObsTimes(counter):ObsTimes(counter+1)-1) = ...

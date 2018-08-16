@@ -26,6 +26,7 @@ alpha2 = 0.10;      % 4DVar inflation parameter
 alpha3 = 0.10;      % SqEnKF inflation parameter
 alpha4 = 0.05;      % EDA inflation parameter
 ObsVar = 1;         % measurement/observation variance
+sigma = sqrt(ObsVar);
 beta = 0.1;
 color1 = 15;
 color2 = 11;
@@ -42,6 +43,7 @@ ObsTimes = jump+1:jump:(exp_iter+jump); % vector of times when observation occur
 %% setup & utilities
 [L1,L2] = L96_get_matrices(n);          % makes matrices for matrix-vector execution of L96
 [H,m] = L96_get_H(n,k);                 % creates observation operator
+mdim = size(H,1);                       % number of observed state variables
 L96fun = @(x)((L1*x).*(L2*x) - x + F);  % Lorenz '96 dynamical system
 gradient_fun = @(x)L96_gradient(x,L1,L2,n);     % Lorenz '96 gradient
 x_start = unifrnd(-1,1,n,1);            % random initial condition
@@ -106,7 +108,7 @@ for ii=2:num_steps
     [Time_Series_True(:,ii),FEvals] = ODE_AB4_auto(Time_Series_True(:,ii-1),FEvals,L96fun,dt);
 end
 
-Obs = H*Time_Series_True(:,num_steps);
+Obs = H*Time_Series_True(:,num_steps) + normrnd(0,sigma,mdim,1);
 
 %% SqEnKF
 for jj=2:num_steps
@@ -150,7 +152,7 @@ for kk=2:q
         [Time_Series_True(:,ii),FEvals] = ODE_AB4_auto(Time_Series_True(:,ii-1),FEvals,L96fun,dt);
     end
     
-    Obs = H*Time_Series_True(:,ObsTimes(kk));
+    Obs = H*Time_Series_True(:,ObsTimes(kk)) + normrnd(0,sigma,mdim,1);
     
     %% SqEnKF
     for jj=1:4
@@ -202,12 +204,10 @@ Error4DVar = TimeSeries4DVar - Time_Series_True;
 ErrorEn4DVar = TimeSeriesEn4DVar - Time_Series_True;
 ErrorEDA = TimeSeriesEDA - Time_Series_True;
 
-for ll=1:exp_iter+1
-    ErrorVecSqEnKF(ll) = norm(ErrorSqEnKF(:,ll),2)/sqn; 
-    ErrorVec4DVar(ll) = norm(Error4DVar(:,ll),2)/sqn; 
-    ErrorVecEn4DVar(ll) = norm(ErrorEn4DVar(:,ll),2)/sqn; 
-    ErrorVecEDA(ll) = norm(ErrorEDA(:,ll),2)/sqn; 
-end
+ErrorVecSqEnKF = vecnorm(ErrorSqEnKF,2)./sqn;
+ErrorVec4DVar = vecnorm(Error4DVar,2)./sqn;
+ErrorVecEn4DVar = vecnorm(ErrorEn4DVar,2)./sqn;
+ErrorVecEDA = vecnorm(ErrorEDA,2)./sqn;
 
 
 error_parameter_1 = mean(ErrorVec4DVar(10*jump:end));

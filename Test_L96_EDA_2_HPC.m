@@ -23,6 +23,7 @@ r2 = [0.5:0.25:7];  % EDA localization radius
 alpha1 = 0.06;      % SqEnKF inflation parameter
 alpha2 = [0:0.02:0.22];     % EDA inflation parameter
 ObsVar = 1;         % measurement/observation variance
+sigma = sqrt(ObsVar);
 r_size = size(r2,2);
 alpha_size = size(alpha2,2);
 beta = 0.3;
@@ -39,6 +40,7 @@ sw = floor((5/6)*exp_iter);
 %% setup & utilities
 [L1,L2] = L96_get_matrices(n);          % makes matrices for matrix-vector execution of L96
 [H,m] = L96_get_H(n,k);                 % creates observation operator
+mdim = size(H,1);                       % number of observed state variables
 L96fun = @(x)((L1*x).*(L2*x) - x + F);  % Lorenz '96 dynamical system
 gradient_fun = @(x)L96_gradient(x,L1,L2,n);     % Lorenz '96 gradient
 x_start = unifrnd(-1,1,n,1);            % random initial condition
@@ -86,7 +88,7 @@ for ll=2:num_steps
     [Time_Series_True(:,ll),FEvals] = ODE_AB4_auto(Time_Series_True(:,ll-1),FEvals,L96fun,dt);
 end
 
-Obs = H*Time_Series_True(:,num_steps);
+Obs = H*Time_Series_True(:,num_steps) + normrnd(0,sigma,mdim,1);
 
 %% SqEnKF
 for jj=2:num_steps
@@ -112,7 +114,7 @@ for kk=2:q_split
         [Time_Series_True(:,ll),FEvals] = ODE_AB4_auto(Time_Series_True(:,ll-1),FEvals,L96fun,dt);
     end
     
-    Obs = H*Time_Series_True(:,ObsTimes(kk));
+    Obs = H*Time_Series_True(:,ObsTimes(kk)) + normrnd(0,sigma,mdim,1);
     
     %% SqEnKF
     for jj=1:4
@@ -150,7 +152,7 @@ for ii=1:r_size
                 [Time_Series_True(:,ll),FEvals] = ODE_AB4_auto(Time_Series_True(:,ll-1),FEvals,L96fun,dt);
             end
             
-            Obs = H*Time_Series_True(:,ObsTimes(kk));
+            Obs = H*Time_Series_True(:,ObsTimes(kk)) + normrnd(0,sigma,mdim,1);
             
             %% EDA
             [X_star_t_EDA,spread,CovEDA,Time_Series] = DA_EDA(X_star_t_EDA,L96fun,...

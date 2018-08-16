@@ -17,8 +17,8 @@ Array6 = Array_Obs([dim1obs,dim2obs,dim3obs],:);
 exp_time = size(Array1,2);
 
 dasz = 11;
-obssz1 = 13;
-obssz2 = 8;
+obssz1 = 20;
+obssz2 = 10;
 truesz = 3.5;
 lag = 2*jump;
 
@@ -43,7 +43,7 @@ set(gca, 'nextplot','replacechildren', 'Visible','on');
 nFrames = 471;
 vidObj = VideoWriter('L96_movie_1.avi');
 vidObj.Quality = 100;
-vidObj.FrameRate = 7;
+vidObj.FrameRate = 15;
 open(vidObj);
 writeVideo(vidObj, getframe(gcf));
 

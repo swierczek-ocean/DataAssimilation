@@ -9,9 +9,9 @@ function [X_t,M] = ACC_R_function(X,ode_rhs_fun,gradient_fun,dt,jump,n)
 %% preliminaries
 FEvals_R = [ode_rhs_fun(X),zeros(n,3)];
 M = eye(n);
-dX = zeros(n,n,jump);
+dX = zeros(n,n,jump+1);
 dX(:,:,1) = M;
-GFEvals = zeros(n,n,jump);
+GFEvals = zeros(n,n,jump+1);
 GFEvals(:,:,1) = gradient_fun(X);
 %%
 
@@ -41,7 +41,7 @@ for ii=2:4
     
 end
 
-for ii=5:jump
+for ii=5:jump+1
     %% AB4
     Temp_1 = (55/24).*FEvals_R(:,4) - ...
         (59/24).*FEvals_R(:,3) + ...

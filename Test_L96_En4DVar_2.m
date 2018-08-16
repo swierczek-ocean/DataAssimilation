@@ -9,30 +9,32 @@ n = 40;             % dimension of L96 system
 sqn = sqrt(n);
 Ne_Sq = 40;         % ensemble size
 spinup_time = 100;  % for getting onto attractor
-exp_time = 6;       % dimensionless time units of DA experiment
+exp_time = 10;      % dimensionless time units of DA experiment
 long_time = 1000;   % long simulation for creating initial ensemble
 dt = 0.01;          % model time step
 jump = 10;          % number of model time steps between observations
 k = 2;              % observe every kth state variable
 F = 8*ones(n,1);    % free parameter on L96 RHS (F = 8 leads to chaotic solutions)
-r1 = 5;             % SqEnKF localization radius
-r2 = 5;             % 4DVar localization radius
-alpha1 = 0.10;      % SqEnKF inflation parameter
-alpha2 = 0.10;      % 4DVar inflation parameter
+r1 = 5.5;           % SqEnKF localization radius
+r2 = 0.5;           % En4DVar localization radius
+alpha1 = 0.06;      % SqEnKF inflation parameter
+alpha2 = 0.00;      % En4DVar inflation parameter
 ObsVar = 1;         % measurement/observation variance
+sigma = sqrt(ObsVar);
 beta = 0.3;
 color1 = 21;
 color2 = 11;
 spinup_iter = floor(spinup_time/dt);    % number of spinup model time steps
 exp_iter = floor(exp_time/dt);          % number of experiment model time steps
 q = floor(exp_iter/jump);               % number of observed time steps
-q_split = ceil(q/2);                    % run EnKF until halfway, then do 4DVar
+q_split = ceil(q/2);                    % run EnKF until halfway, then do En4DVar
 ObsTimes = jump:jump:(exp_iter+jump); % vector of times when observation occurs
 %%
 
 %% setup & utilities
 [L1,L2] = L96_get_matrices(n);          % makes matrices for matrix-vector execution of L96
 [H,m] = L96_get_H(n,k);                 % creates observation operator
+mdim = size(H,1);                       % number of observed state variables
 L96fun = @(x)((L1*x).*(L2*x) - x + F);  % Lorenz '96 dynamical system
 gradient_fun = @(x)L96_gradient(x,L1,L2,n);     % Lorenz '96 gradient
 x_start = unifrnd(-1,1,n,1);            % random initial condition
@@ -71,19 +73,17 @@ TimeSeriesEn4DVar = zeros(n,exp_iter);         % array for storing full 4DVar
 
 spreadVecEn4DVar = spread.*ones(1,exp_iter);   
 
-ErrorVecEn4DVar = zeros(1,exp_iter);
-
 Time_Series_True = [X,zeros(n,exp_iter-1)];    % array for storing full true state  
 total_steps = 0;
 
 %% from start to first observartions
 
-num_steps = ObsTimes(1)
+num_steps = ObsTimes(1);
 for ii=2:num_steps
     [Time_Series_True(:,ii),FEvals] = ODE_AB4_auto(Time_Series_True(:,ii-1),FEvals,L96fun,dt);
 end
 
-Obs = H*Time_Series_True(:,num_steps);
+Obs = H*Time_Series_True(:,num_steps) + normrnd(0,sigma,mdim,1);
 
 %% SqEnKF
 for jj=2:num_steps
@@ -104,13 +104,13 @@ total_steps = total_steps + num_steps;
 %% loop for EnKF spinup
 
 for kk=2:q_split  
-    num_steps = ObsTimes(kk)-ObsTimes(kk-1)
+    num_steps = ObsTimes(kk)-ObsTimes(kk-1);
     
     for ii=(ObsTimes(kk-1)+1):ObsTimes(kk)
         [Time_Series_True(:,ii),FEvals] = ODE_AB4_auto(Time_Series_True(:,ii-1),FEvals,L96fun,dt);
     end
     
-    Obs = H*Time_Series_True(:,ObsTimes(kk));
+    Obs = H*Time_Series_True(:,ObsTimes(kk)) + normrnd(0,sigma,mdim,1);
     
     %% SqEnKF
     for jj=1:4
@@ -137,13 +137,13 @@ CovEn4DVar = (1+alpha1)*L_SqEnKF.*P_a;
 EnsembleEn4DVar = EnsembleSqEnKF;
 
 for kk=q_split+1:q  
-    num_steps = ObsTimes(kk)-ObsTimes(kk-1)
+    num_steps = ObsTimes(kk)-ObsTimes(kk-1);
     
     for ii=(ObsTimes(kk-1)+1):ObsTimes(kk)
         [Time_Series_True(:,ii),FEvals] = ODE_AB4_auto(Time_Series_True(:,ii-1),FEvals,L96fun,dt);
     end
     
-    Obs = H*Time_Series_True(:,ObsTimes(kk));
+    Obs = H*Time_Series_True(:,ObsTimes(kk)) + normrnd(0,sigma,mdim,1);
     
     %% En4DVar
     [EnsembleEn4DVar,X_star_t_En4DVar,spread,Time_Series,CovEn4DVar] = DA_En4DVar(X_star_t_En4DVar,...
@@ -158,11 +158,9 @@ TimeSeriesEn4DVar(:,end) = X_star_t_En4DVar;
 spreadVecEn4DVar(:,end) = spread;
 ErrorEn4DVar = TimeSeriesEn4DVar - Time_Series_True;
 
-for ll=1:exp_iter
-    ErrorVecEn4DVar(ll) = norm(ErrorEn4DVar(:,ll),2)/sqn; 
-end
+ErrorVecEn4DVar = vecnorm(ErrorEn4DVar,2)./sqn; 
 
-error_parameter_1 = mean(ErrorVecEn4DVar(10*jump:end));
+error_parameter_1 = mean(ErrorVecEn4DVar(ObsTimes(q_split):end));
 fprintf('Average RMSE for En4DVar: %g\n',error_parameter_1)
 fprintf('Average spread: %g\n',mean(spreadVecEn4DVar(10:end)))
 
@@ -174,7 +172,7 @@ h2 = plot(spreadVecEn4DVar,'Color',Color(:,color2),'LineWidth',2.2);
 title('RMSE & spread')
 xlabel('time')
 ylabel('RMSE')
-legend([h1(1),h2(1)],'4DVar','spread')
+legend([h1(1),h2(1)],'En4DVar','spread')
 print('Test_L96_En4DVar_2','-djpeg')
 hold off
 %%
