@@ -1,0 +1,145 @@
+
+                            < M A T L A B (R) >
+                  Copyright 1984-2018 The MathWorks, Inc.
+                   R2018a (9.4.0.813654) 64-bit (glnxa64)
+                             February 23, 2018
+
+ 
+To get started, type one of these: helpwin, helpdesk, or demo.
+For product information, visit www.mathworks.com.
+ 
+>> >> >> >> >> >> >> >> >> All warnings have the state 'off'.
+>> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> SqEnKF RMSE for r=5.4, alpha=0.08 is 0.662557
+Average RMSE for r=2, alpha=0: 9.49183, time = 30.4818
+Average RMSE for r=2, alpha=0.02: 7.78643, time = 23.995
+Average RMSE for r=2, alpha=0.04: 8.00549, time = 18.6863
+Average RMSE for r=2, alpha=0.06: 11.9029, time = 16.9887
+Average RMSE for r=2, alpha=0.08: 8.69024, time = 18.3947
+Average RMSE for r=2, alpha=0.1: 9.81298, time = 26.5019
+Average RMSE for r=2, alpha=0.12: 12.4847, time = 20.3193
+Average RMSE for r=2, alpha=0.14: 11.6304, time = 26.1384
+Average RMSE for r=2, alpha=0.16: 12.8167, time = 38.8107
+Average RMSE for r=2, alpha=0.18: 15.255, time = 26.0934
+Average RMSE for r=2, alpha=0.2: 8.88787, time = 15.5601
+Average RMSE for r=2, alpha=0.22: 9.69447, time = 34.902
+Average RMSE for r=2, alpha=0.24: 10.6735, time = 22.5971
+Average RMSE for r=2, alpha=0.26: 13.3531, time = 28.9987
+Average RMSE for r=2, alpha=0.28: 12.4614, time = 25.8557
+Average RMSE for r=2, alpha=0.3: 11.5979, time = 41.126
+Average RMSE for r=2, alpha=0.32: 10.9573, time = 45.5258
+Average RMSE for r=2, alpha=0.34: 11.2989, time = 32.3788
+Average RMSE for r=2, alpha=0.36: 9.72719, time = 20.275
+Average RMSE for r=2.5, alpha=0: 8.64527, time = 12.8433
+Average RMSE for r=2.5, alpha=0.02: 9.21584, time = 7.60607
+Average RMSE for r=2.5, alpha=0.04: 7.28315, time = 18.9871
+Average RMSE for r=2.5, alpha=0.06: 7.16172, time = 8.56616
+Average RMSE for r=2.5, alpha=0.08: 9.70754, time = 37.0071
+Average RMSE for r=2.5, alpha=0.1: 9.54098, time = 25.778
+Average RMSE for r=2.5, alpha=0.12: 11.6522, time = 20.692
+Average RMSE for r=2.5, alpha=0.14: 10.7847, time = 9.38765
+Average RMSE for r=2.5, alpha=0.16: 7.70791, time = 12.5205
+Average RMSE for r=2.5, alpha=0.18: 12.1725, time = 22.6877
+Average RMSE for r=2.5, alpha=0.2: 9.98516, time = 20.116
+Average RMSE for r=2.5, alpha=0.22: 9.03792, time = 25.1152
+Average RMSE for r=2.5, alpha=0.24: 6.68394, time = 27.4498
+Average RMSE for r=2.5, alpha=0.26: 11.4949, time = 27.727
+Average RMSE for r=2.5, alpha=0.28: 13.0284, time = 20.5674
+Average RMSE for r=2.5, alpha=0.3: 7.88871, time = 13.2781
+Average RMSE for r=2.5, alpha=0.32: 5.45144, time = 6.73749
+Average RMSE for r=2.5, alpha=0.34: 5.93514, time = 3.85737
+Average RMSE for r=2.5, alpha=0.36: 8.33825, time = 2.99259
+Average RMSE for r=3, alpha=0: 5.67773, time = 4.63883
+Average RMSE for r=3, alpha=0.02: 8.68009, time = 16.0888
+Average RMSE for r=3, alpha=0.04: 11.1284, time = 13.892
+Average RMSE for r=3, alpha=0.06: 6.66209, time = 21.0379
+Average RMSE for r=3, alpha=0.08: 6.6443, time = 11.8386
+Average RMSE for r=3, alpha=0.1: 7.47393, time = 5.54185
+Average RMSE for r=3, alpha=0.12: 6.26754, time = 2.41379
+Average RMSE for r=3, alpha=0.14: 8.47064, time = 4.09906
+Average RMSE for r=3, alpha=0.16: 7.47004, time = 3.04455
+Average RMSE for r=3, alpha=0.18: 6.30882, time = 5.90791
+Average RMSE for r=3, alpha=0.2: 10.1772, time = 20.9498
+Average RMSE for r=3, alpha=0.22: 8.71313, time = 13.8588
+Average RMSE for r=3, alpha=0.24: 6.0431, time = 17.8363
+Average RMSE for r=3, alpha=0.26: 6.61218, time = 10.9019
+Average RMSE for r=3, alpha=0.28: 11.7945, time = 11.8129
+Average RMSE for r=3, alpha=0.3: 9.93652, time = 18.4691
+Average RMSE for r=3, alpha=0.32: 9.08268, time = 7.67244
+Average RMSE for r=3, alpha=0.34: 9.01305, time = 16.5314
+Average RMSE for r=3, alpha=0.36: 8.19753, time = 15.6233
+Average RMSE for r=3.5, alpha=0: 10.1742, time = 10.0421
+Average RMSE for r=3.5, alpha=0.02: 6.06315, time = 7.55337
+Average RMSE for r=3.5, alpha=0.04: 7.48788, time = 14.0598
+Average RMSE for r=3.5, alpha=0.06: 7.16933, time = 16.9924
+Average RMSE for r=3.5, alpha=0.08: 6.57825, time = 6.436
+Average RMSE for r=3.5, alpha=0.1: 9.35881, time = 11.086
+Average RMSE for r=3.5, alpha=0.12: 9.0505, time = 18.7599
+Average RMSE for r=3.5, alpha=0.14: 8.93568, time = 10.9016
+Average RMSE for r=3.5, alpha=0.16: 11.8322, time = 17.1826
+Average RMSE for r=3.5, alpha=0.18: 9.13189, time = 17.8726
+Average RMSE for r=3.5, alpha=0.2: 8.92922, time = 14.6259
+Average RMSE for r=3.5, alpha=0.22: 7.964, time = 3.88088
+Average RMSE for r=3.5, alpha=0.24: 6.09582, time = 8.89001
+Average RMSE for r=3.5, alpha=0.26: 8.56935, time = 3.51167
+Average RMSE for r=3.5, alpha=0.28: 5.97419, time = 1.74325
+Average RMSE for r=3.5, alpha=0.3: 5.53118, time = 2.83596
+Average RMSE for r=3.5, alpha=0.32: 7.89667, time = 8.13578
+Average RMSE for r=3.5, alpha=0.34: 8.24429, time = 2.96979
+Average RMSE for r=3.5, alpha=0.36: 8.29391, time = 11.2871
+Average RMSE for r=4, alpha=0: 9.00847, time = 5.79146
+Average RMSE for r=4, alpha=0.02: 6.19808, time = 2.95189
+Average RMSE for r=4, alpha=0.04: 9.44173, time = 16.5296
+Average RMSE for r=4, alpha=0.06: 9.38262, time = 10.8848
+Average RMSE for r=4, alpha=0.08: 9.38671, time = 12.7533
+Average RMSE for r=4, alpha=0.1: 6.57723, time = 2.86354
+Average RMSE for r=4, alpha=0.12: 7.67073, time = 11.1703
+Average RMSE for r=4, alpha=0.14: 5.2816, time = 11.1619
+Average RMSE for r=4, alpha=0.16: 5.38349, time = 6.63101
+Average RMSE for r=4, alpha=0.18: 6.15395, time = 12.3407
+Average RMSE for r=4, alpha=0.2: 5.86782, time = 10.8382
+Average RMSE for r=4, alpha=0.22: 6.42422, time = 12.7683
+Average RMSE for r=4, alpha=0.24: 7.93648, time = 15.1816
+Average RMSE for r=4, alpha=0.26: 6.903, time = 12.7649
+Average RMSE for r=4, alpha=0.28: 11.857, time = 12.8748
+Average RMSE for r=4, alpha=0.3: 7.38154, time = 9.86908
+Average RMSE for r=4, alpha=0.32: 7.52115, time = 7.12185
+Average RMSE for r=4, alpha=0.34: 5.60821, time = 8.18217
+Average RMSE for r=4, alpha=0.36: 6.81901, time = 3.09771
+Average RMSE for r=4.5, alpha=0: 7.66047, time = 9.98383
+Average RMSE for r=4.5, alpha=0.02: 7.74328, time = 12.1265
+Average RMSE for r=4.5, alpha=0.04: 6.42438, time = 8.14424
+Average RMSE for r=4.5, alpha=0.06: 5.99008, time = 4.19568
+Average RMSE for r=4.5, alpha=0.08: 5.7617, time = 3.3043
+Average RMSE for r=4.5, alpha=0.1: 5.76273, time = 4.01898
+Average RMSE for r=4.5, alpha=0.12: 6.29853, time = 6.10901
+Average RMSE for r=4.5, alpha=0.14: 4.84545, time = 3.40829
+Average RMSE for r=4.5, alpha=0.16: 5.98064, time = 3.0724
+Average RMSE for r=4.5, alpha=0.18: 8.02766, time = 9.19991
+Average RMSE for r=4.5, alpha=0.2: 7.84481, time = 7.85998
+Average RMSE for r=4.5, alpha=0.22: 9.5008, time = 7.03303
+Average RMSE for r=4.5, alpha=0.24: 7.56831, time = 14.3178
+Average RMSE for r=4.5, alpha=0.26: 6.66167, time = 10.964
+Average RMSE for r=4.5, alpha=0.28: 7.52711, time = 5.52989
+Average RMSE for r=4.5, alpha=0.3: 6.32915, time = 14.8892
+Average RMSE for r=4.5, alpha=0.32: 7.63662, time = 6.14672
+Average RMSE for r=4.5, alpha=0.34: 5.86575, time = 7.98189
+Average RMSE for r=4.5, alpha=0.36: 5.10969, time = 4.88699
+Average RMSE for r=5, alpha=0: 6.52044, time = 11.8959
+Average RMSE for r=5, alpha=0.02: 7.75598, time = 15.6655
+Average RMSE for r=5, alpha=0.04: 6.41809, time = 27.3382
+Average RMSE for r=5, alpha=0.06: 6.74115, time = 10.1024
+Average RMSE for r=5, alpha=0.08: 6.49701, time = 8.77369
+Average RMSE for r=5, alpha=0.1: 5.76611, time = 17.0847
+Average RMSE for r=5, alpha=0.12: 7.28138, time = 21.049
+Average RMSE for r=5, alpha=0.14: 5.57215, time = 9.16498
+Average RMSE for r=5, alpha=0.16: 7.36748, time = 9.92214
+Average RMSE for r=5, alpha=0.18: 10.2594, time = 7.50467
+Average RMSE for r=5, alpha=0.2: 7.83792, time = 4.50484
+Average RMSE for r=5, alpha=0.22: 7.32951, time = 4.77546
+Average RMSE for r=5, alpha=0.24: 6.56466, time = 4.5016
+Average RMSE for r=5, alpha=0.26: 5.14513, time = 7.61691
+Average RMSE for r=5, alpha=0.28: 3.39125, time = 3.35499
+Average RMSE for r=5, alpha=0.3: 9.63248, time = 7.78212
+Average RMSE for r=5, alpha=0.32: 6.30309, time = 3.54404
+>> >> Minimum RMSE for r=5, alpha=0.28 is 3.39125
+>> >> >> >> >> 

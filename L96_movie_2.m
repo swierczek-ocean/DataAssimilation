@@ -20,12 +20,12 @@ set(gca, 'nextplot','replacechildren', 'Visible','on');
 nFrames = 471;
 vidObj = VideoWriter('L96_movie_2.avi');
 vidObj.Quality = 100;
-vidObj.FrameRate = 25;
+vidObj.FrameRate = 32;
 open(vidObj);
 writeVideo(vidObj, getframe(gcf));
 
-for ii=2:exp_time
-    plot3(Array(1,1:ii),Array(2,1:ii),Array(3,1:ii),'Color',Color(:,color1),'LineWidth',truesz);
+for ii=2:floor(exp_time/2)-10
+    plot3(Array(1,1:2*ii),Array(2,1:2*ii),Array(3,1:2*ii),'Color',Color(:,color1),'LineWidth',truesz);
     xlabel('x')
     ylabel('y')
     zlabel('z')

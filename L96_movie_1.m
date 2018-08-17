@@ -16,11 +16,11 @@ Array6 = Array_Obs([dim1obs,dim2obs,dim3obs],:);
 
 exp_time = size(Array1,2);
 
-dasz = 11;
+dasz = 15;
 obssz1 = 20;
 obssz2 = 10;
-truesz = 3.5;
-lag = 2*jump;
+truesz = 3.9;
+lag = 3*jump;
 
 figure()
 set(gcf, 'Position', [25, 25, 1600, 900])

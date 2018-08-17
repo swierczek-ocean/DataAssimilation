@@ -7,7 +7,7 @@ close all
 ACC_Colors
 warning('off','all')
 warning
-n = 40;             % dimension of L96 system
+n = 50;             % dimension of L96 system
 sqn = sqrt(n);
 Ne_Sq = 40;         % ensemble size
 Ne_En = 40;         % ensemble size
@@ -19,14 +19,14 @@ dt = 0.02;          % model time step
 jump = 10;          % number of model time steps between observations
 k = 2;              % observe every kth state variable
 F = 8*ones(n,1);    % free parameter on L96 RHS (F = 8 leads to chaotic solutions)
-r1 = 3.5;           % En4DVar localization radius
-r2 = 3.5;           % 4DVar localization radius
-r3 = 5.4;           % SqEnKF localization radius
-r4 = 3.5;           % EDA localization radius
+r1 = 7;            % En4DVar localization radius
+r2 = 6;             % 4DVar localization radius
+r3 = 5.5;           % SqEnKF localization radius
+r4 = 7;             % EDA localization radius
 alpha1 = 0.15;      % En4DVar inflation parameter
-alpha2 = 0.00;      % 4DVar inflation parameter
-alpha3 = 0.08;      % SqEnKF inflation parameter
-alpha4 = 0.00;      % EDA inflation parameter
+alpha2 = 0.30;      % 4DVar inflation parameter
+alpha3 = 0.10;      % SqEnKF inflation parameter
+alpha4 = 0.30;      % EDA inflation parameter
 ObsVar = 1;         % measurement/observation variance
 sigma = sqrt(ObsVar);
 beta = 0.1;
@@ -34,9 +34,10 @@ color1 = 11;        % SqEnKF
 color2 = 29;        % 4DVar
 color3 = 3;         % EDA
 color4 = 39;        % EnVDvar
-color5 = 38;        % True
+color5 = 40;        % True
 color6 = 4;         % Obs
 color7 = 4;         % spread
+color8 = 8;
 spinup_iter = floor(spinup_time/dt);    % number of spinup model time steps
 exp_iter = floor(exp_time/dt);          % number of experiment model time steps
 q = floor(exp_iter/jump);               % number of observed time steps
@@ -292,10 +293,14 @@ xx = -7.5;
 yy = 11.5;
 
 coords = [xx yy xx yy xx yy];
+
 % L96_movie_1(Array_SqEnKF,Array_4DVar,Array_EDA,Array_En4DVar,Array_True,Array_Obs,...
 %     color1,color2,color3,color4,color5,color6,dim1,dim2,dim3,coords,jump)
 
-L96_movie_2(Time_Series_True,color4,dim1,dim2,dim3,coords)
+% L96_movie_2(Time_Series_True,color8,dim1,dim2,dim3,coords)
+
+L96_movie_3(Array_SqEnKF,Array_4DVar,Array_EDA,Array_En4DVar,Array_True,Array_Obs,...
+    color1,color2,color3,color4,color5,color6,jump,ObsTimes)
 %%
 
 toc()

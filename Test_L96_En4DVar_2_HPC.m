@@ -5,7 +5,6 @@ close all
 
 %% preliminaries
 warning('off','all')
-warning
 ACC_Colors
 n = 40;             % dimension of L96 system
 sqn = sqrt(n);
@@ -21,7 +20,7 @@ r1 = 5.4;           % SqEnKF localization radius
 r2 = [1:0.25:7];     % En4DVar localization radius
 alpha1 = 0.08;      % SqEnKF inflation parameter
 alpha2 = [0.15:0.02:0.51];     % En4DVar inflation parameter
-ObsVar = 1;         % measurement/observation variance
+ObsVar = .1;         % measurement/observation variance
 sigma = sqrt(ObsVar);
 r_size = size(r2,2);
 alpha_size = size(alpha2,2);
