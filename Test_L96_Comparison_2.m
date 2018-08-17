@@ -299,8 +299,8 @@ coords = [xx yy xx yy xx yy];
 
 % L96_movie_2(Time_Series_True,color8,dim1,dim2,dim3,coords)
 
-L96_movie_3(Array_SqEnKF,Array_4DVar,Array_EDA,Array_En4DVar,Array_True,Array_Obs,...
-    color1,color2,color3,color4,color5,color6,jump,ObsTimes)
+% L96_movie_3(Array_SqEnKF,Array_4DVar,Array_EDA,Array_En4DVar,Array_True,Array_Obs,...
+%     color1,color2,color3,color4,color5,color6,jump,ObsTimes)
 %%
 
 toc()
